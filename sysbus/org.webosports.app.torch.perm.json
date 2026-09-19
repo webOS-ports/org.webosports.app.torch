@@ -1,4 +1,3 @@
 {
-    "org.webosports.app.torch": [ "torch.operation" ],
     "org.webosports.app.torch-*": [ "torch.operation" ]
 }

@@ -13,11 +13,9 @@ install(FILES appinfo.json icon.png DESTINATION ${APP_DIR})
 
 # luna-service2: register the app id and grant it torchd's torch.operation
 # group, so it can drive torchd exactly as the shell's Flashlight toggle does.
-configure_file(sysbus/org.webosports.app.torch.role.json.in
-               ${CMAKE_BINARY_DIR}/org.webosports.app.torch.role.json @ONLY)
 configure_file(sysbus/org.webosports.app.torch.manifest.json.in
                ${CMAKE_BINARY_DIR}/org.webosports.app.torch.manifest.json @ONLY)
-install(FILES ${CMAKE_BINARY_DIR}/org.webosports.app.torch.role.json
+install(FILES sysbus/org.webosports.app.torch.app.json
         DESTINATION share/luna-service2/roles.d)
 install(FILES ${CMAKE_BINARY_DIR}/org.webosports.app.torch.manifest.json
         DESTINATION share/luna-service2/manifests.d)

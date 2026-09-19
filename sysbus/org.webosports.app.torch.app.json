@@ -1,0 +1,11 @@
+{
+    "appId": "org.webosports.app.torch",
+    "type": "regular",
+    "allowedNames": ["org.webosports.app.torch-*", ""],
+    "permissions": [
+        {
+            "service": "org.webosports.app.torch-*",
+            "outbound": ["*"]
+        }
+    ]
+}
