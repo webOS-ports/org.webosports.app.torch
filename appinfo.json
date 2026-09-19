@@ -1,11 +1,13 @@
 {
+    "title": "Torch",
     "id": "org.webosports.app.torch",
     "version": "1.0.0",
     "vendor": "webOS Ports",
     "type": "qml",
     "main": "qml/main.qml",
+    "noWindow": true,
+    "useWebEngine": false,
     "icon": "icon.png",
-    "title": "Torch",
-    "iconColor": "#efb810",
-    "uiRevision": "2"
+    "uiRevision": "2",
+    "keywords": [ "Torch", "Flashlight", "Light" ]
 }

@@ -5,12 +5,11 @@ import TorchApp 1.0
 
 WebOSWindow {
     id: root
+    visible: true
     width: 600
     height: 800
     windowType: "_WEBOS_WINDOW_TYPE_CARD"
     title: "Torch"
-    displayAffinity: params.displayAffinity
-
     color: "black"
 
     Column {
@@ -18,7 +17,6 @@ WebOSWindow {
         spacing: Units.gu(4)
 
         Rectangle {
-            id: button
             anchors.horizontalCenter: parent.horizontalCenter
             width: Units.gu(28); height: width; radius: width / 2
             color: Torch.on ? "#efb810" : "#333333"
