@@ -15,20 +15,16 @@ WebOSWindow {
     property bool available: false
     property bool torchOn: false
 
-    // Same service and calls the shell's Flashlight toggle uses
-    // (luna-next-cardshell NewDeviceMenu.qml), so the app and the system menu
-    // stay in sync: torchd owns the LED, we just drive and observe it.
+    // Drive the LED through torchd (org.webosports.service.torch), the same
+    // service the shell's Flashlight toggle uses, so torchd stays the single
+    // owner of the LED and the app and the system menu stay in sync.
     LunaService {
         id: torch
         name: "org.webosports.app.torch"
         usePrivateBus: true
-    }
 
-    ServiceStatus {
-        id: torchStatus
-        serviceName: "org.webosports.service.torch"
-        onConnected: {
-            torch.subscribe("luna://org.webosports.service.torch/getStatus",
+        onInitialized: {
+            subscribe("luna://org.webosports.service.torch/getStatus",
                 JSON.stringify({"subscribe": true}),
                 function(msg) {
                     var r = JSON.parse(msg.payload);
@@ -37,7 +33,6 @@ WebOSWindow {
                 },
                 function(err) { root.available = false; });
         }
-        onDisconnected: root.available = false
     }
 
     function toggle() {
