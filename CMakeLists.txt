@@ -18,8 +18,8 @@ configure_file(sysbus/org.webosports.app.torch.role.json.in
 configure_file(sysbus/org.webosports.app.torch.manifest.json.in
                ${CMAKE_BINARY_DIR}/org.webosports.app.torch.manifest.json @ONLY)
 install(FILES ${CMAKE_BINARY_DIR}/org.webosports.app.torch.role.json
-        DESTINATION ${WEBOS_INSTALL_WEBOS_SYSBUSDIR}/roles.d)
+        DESTINATION share/luna-service2/roles.d)
 install(FILES ${CMAKE_BINARY_DIR}/org.webosports.app.torch.manifest.json
-        DESTINATION ${WEBOS_INSTALL_WEBOS_SYSBUSDIR}/manifests.d)
+        DESTINATION share/luna-service2/manifests.d)
 install(FILES sysbus/org.webosports.app.torch.perm.json
-        DESTINATION ${WEBOS_INSTALL_WEBOS_SYSBUSDIR}/client-permissions.d)
+        DESTINATION share/luna-service2/client-permissions.d)

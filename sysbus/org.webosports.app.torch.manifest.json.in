@@ -1,6 +1,6 @@
 {
     "id": "org.webosports.app.torch",
     "version": "1.0.0",
-    "roleFiles": ["@WEBOS_INSTALL_WEBOS_SYSBUSDIR@/roles.d/org.webosports.app.torch.role.json"],
-    "clientPermissionFiles": ["@WEBOS_INSTALL_WEBOS_SYSBUSDIR@/client-permissions.d/org.webosports.app.torch.perm.json"]
+    "roleFiles": ["/usr/share/luna-service2/roles.d/org.webosports.app.torch.role.json"],
+    "clientPermissionFiles": ["/usr/share/luna-service2/client-permissions.d/org.webosports.app.torch.perm.json"]
 }
