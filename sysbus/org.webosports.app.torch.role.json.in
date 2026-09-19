@@ -1,0 +1,9 @@
+{
+    "exeName": "@APP_DIR@/org.webosports.app.torch",
+    "trustLevel": "oem",
+    "type": "regular",
+    "allowedNames": ["org.webosports.app.torch", "org.webosports.app.torch-*", ""],
+    "permissions": [
+        { "service": "org.webosports.app.torch", "inbound": ["*"], "outbound": ["*"] }
+    ]
+}
