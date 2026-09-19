@@ -1,0 +1,11 @@
+{
+    "id": "org.webosports.app.torch",
+    "version": "1.0.0",
+    "vendor": "webOS Ports",
+    "type": "qml",
+    "main": "qml/main.qml",
+    "icon": "icon.png",
+    "title": "Torch",
+    "iconColor": "#efb810",
+    "uiRevision": "2"
+}
