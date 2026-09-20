@@ -14,7 +14,7 @@ WebOSWindow {
     property bool available: false
     property bool torchOn: false
 
-    // torchd owns the LED; we drive and observe it the same way the shell's
+    // torchd owns the LED; drive and observe it the same way the shell's
     // Flashlight quick-toggle does, so the two stay in sync.
     LunaService {
         id: torch
@@ -31,57 +31,59 @@ WebOSWindow {
         torch.call("luna://org.webosports.service.torch/toggle", "{}",
                    function(m){}, function(e){ console.warn("torch toggle failed: " + JSON.stringify(e)); })
     }
+    function turnOff() {
+        torch.call("luna://org.webosports.service.torch/set", JSON.stringify({"on": false}),
+                   function(m){}, function(e){})
+    }
+    // Closing the card destroys the app; make sure we don't leave the LED on.
+    // (Backgrounding keeps the app alive and does not fire this, so the torch
+    //  stays lit if you pocket the device with the app still open.)
+    Component.onDestruction: if (root.torchOn) turnOff()
 
-    // Dark, softly-lit backdrop that warms up when the torch is on.
+    // Dark backdrop that warms up when the torch is on.
     Rectangle {
         anchors.fill: parent
         gradient: Gradient {
-            GradientStop { position: 0.0; color: root.torchOn ? "#2a2620" : "#1a1c20" }
+            GradientStop { position: 0.0; color: root.torchOn ? "#332d24" : "#1a1c20" }
             GradientStop { position: 1.0; color: "#000000" }
         }
-        Behavior on color {}
     }
 
-    Item {
+    Image {
+        id: torchOff
+        source: "images/torch_off.png"
+        height: parent.height * 0.86
+        width: height * (sourceSize.width / sourceSize.height)
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: Units.gu(7)
+        smooth: true
+        mipmap: true
+    }
+    Image {
+        source: "images/torch_on.png"
+        height: torchOff.height
+        width: torchOff.width
+        anchors.horizontalCenter: torchOff.horizontalCenter
+        anchors.bottom: torchOff.bottom
+        smooth: true
+        mipmap: true
+        opacity: root.torchOn ? 1.0 : 0.0
+        Behavior on opacity { NumberAnimation { duration: 180 } }
+    }
+
+    Text {
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: Units.gu(2.5)
+        text: root.available ? (root.torchOn ? "Tap to turn off" : "Tap to turn on") : "Torch unavailable"
+        color: "#9a9a9a"
+        font.pixelSize: Units.gu(2.4)
+    }
+
+    MouseArea {
         anchors.fill: parent
-
-        // The torch, upright, lower-centre. Off image always shown; on image
-        // (glowing lens + beam) cross-fades in. Beam points up the screen.
-        Image {
-            id: torchOff
-            source: "images/torch_off.png"
-            fillMode: Image.PreserveAspectFit
-            width: parent.width * 0.62
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: Units.gu(10)
-            smooth: true
-        }
-        Image {
-            source: "images/torch_on.png"
-            width: torchOff.width
-            anchors.horizontalCenter: torchOff.horizontalCenter
-            anchors.bottom: torchOff.bottom
-            fillMode: Image.PreserveAspectFit
-            smooth: true
-            opacity: root.torchOn ? 1.0 : 0.0
-            Behavior on opacity { NumberAnimation { duration: 180 } }
-        }
-
-        Text {
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: Units.gu(4)
-            text: root.available ? (root.torchOn ? "Tap to turn off" : "Tap to turn on")
-                                 : "Torch unavailable"
-            color: "#9a9a9a"
-            font.pixelSize: Units.gu(2.4)
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            enabled: root.available
-            onClicked: root.toggle()
-        }
+        enabled: root.available
+        onClicked: root.toggle()
     }
 }
