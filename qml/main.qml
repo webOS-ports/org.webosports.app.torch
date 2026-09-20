@@ -10,59 +10,78 @@ WebOSWindow {
     height: 800
     windowType: "_WEBOS_WINDOW_TYPE_CARD"
     title: "Torch"
-    color: "black"
 
     property bool available: false
     property bool torchOn: false
 
-    // Drive the LED through torchd (org.webosports.service.torch), the same
-    // service the shell's Flashlight toggle uses, so torchd stays the single
-    // owner of the LED and the app and the system menu stay in sync.
+    // torchd owns the LED; we drive and observe it the same way the shell's
+    // Flashlight quick-toggle does, so the two stay in sync.
     LunaService {
         id: torch
         name: "org.webosports.app.torch"
         usePrivateBus: true
-
-        onInitialized: {
-            subscribe("luna://org.webosports.service.torch/getStatus",
-                JSON.stringify({"subscribe": true}),
-                function(msg) {
-                    var r = JSON.parse(msg.payload);
-                    if (r.hasOwnProperty("available")) root.available = r.available;
-                    if (r.hasOwnProperty("on")) root.torchOn = r.on;
-                },
-                function(err) { root.available = false; });
-        }
+        onInitialized: subscribe("luna://org.webosports.service.torch/getStatus",
+            JSON.stringify({"subscribe": true}),
+            function(m) { var r = JSON.parse(m.payload);
+                if (r.hasOwnProperty("available")) root.available = r.available;
+                if (r.hasOwnProperty("on")) root.torchOn = r.on; },
+            function(e) { root.available = false; })
     }
-
     function toggle() {
         torch.call("luna://org.webosports.service.torch/toggle", "{}",
-                   function(m) {}, function(e) { console.warn("torch toggle failed: " + JSON.stringify(e)); });
+                   function(m){}, function(e){ console.warn("torch toggle failed: " + JSON.stringify(e)); })
     }
 
-    Column {
-        anchors.centerIn: parent
-        spacing: Units.gu(4)
-
-        Rectangle {
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: Units.gu(28); height: width; radius: width / 2
-            color: root.torchOn ? "#efb810" : "#333333"
-            border.color: "#efb810"; border.width: Units.gu(0.5)
-            Behavior on color { ColorAnimation { duration: 150 } }
-            Text {
-                anchors.centerIn: parent
-                text: root.torchOn ? "ON" : "OFF"
-                color: root.torchOn ? "black" : "#efb810"
-                font.pixelSize: Units.gu(6); font.bold: true
-            }
-            MouseArea { anchors.fill: parent; enabled: root.available; onClicked: root.toggle() }
+    // Dark, softly-lit backdrop that warms up when the torch is on.
+    Rectangle {
+        anchors.fill: parent
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: root.torchOn ? "#2a2620" : "#1a1c20" }
+            GradientStop { position: 1.0; color: "#000000" }
         }
+        Behavior on color {}
+    }
+
+    Item {
+        anchors.fill: parent
+
+        // The torch, upright, lower-centre. Off image always shown; on image
+        // (glowing lens + beam) cross-fades in. Beam points up the screen.
+        Image {
+            id: torchOff
+            source: "images/torch_off.png"
+            fillMode: Image.PreserveAspectFit
+            width: parent.width * 0.62
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: Units.gu(10)
+            smooth: true
+        }
+        Image {
+            source: "images/torch_on.png"
+            width: torchOff.width
+            anchors.horizontalCenter: torchOff.horizontalCenter
+            anchors.bottom: torchOff.bottom
+            fillMode: Image.PreserveAspectFit
+            smooth: true
+            opacity: root.torchOn ? 1.0 : 0.0
+            Behavior on opacity { NumberAnimation { duration: 180 } }
+        }
+
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
-            horizontalAlignment: Text.AlignHCenter
-            text: root.available ? "Tap to toggle the flash" : "Torch unavailable"
-            color: "#888888"; font.pixelSize: Units.gu(2.2)
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: Units.gu(4)
+            text: root.available ? (root.torchOn ? "Tap to turn off" : "Tap to turn on")
+                                 : "Torch unavailable"
+            color: "#9a9a9a"
+            font.pixelSize: Units.gu(2.4)
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            enabled: root.available
+            onClicked: root.toggle()
         }
     }
 }
