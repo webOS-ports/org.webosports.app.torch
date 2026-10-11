@@ -2,6 +2,7 @@ import QtQuick 2.6
 import Eos.Window 0.1
 import LunaNext.Common 0.1
 import LuneOS.Service 1.0
+import LuneOS.System 1.0
 
 WebOSWindow {
     id: root
@@ -20,12 +21,33 @@ WebOSWindow {
         id: torch
         name: "org.webosports.app.torch"
         usePrivateBus: true
-        onInitialized: subscribe("luna://org.webosports.service.torch/getStatus",
+    }
+
+    // Subscribed whenever torchd is on the bus, not once at startup: it is
+    // not on every device, and one that starts after the app (or restarts)
+    // would otherwise leave "Torch unavailable" up until the app is reopened.
+    ServiceStatus {
+        id: torchService
+        serviceName: "org.webosports.service.torch"
+        clientName: "org.webosports.app.torch"
+        onAvailableChanged: {
+            if (available)
+                root.subscribeStatus();
+            else
+                root.available = false;
+        }
+    }
+
+    property var statusCall: null
+    function subscribeStatus() {
+        if (statusCall)
+            statusCall.cancel();
+        statusCall = torch.subscribe("luna://org.webosports.service.torch/getStatus",
             JSON.stringify({"subscribe": true}),
             function(m) { var r = JSON.parse(m.payload);
                 if (r.hasOwnProperty("available")) root.available = r.available;
                 if (r.hasOwnProperty("on")) root.torchOn = r.on; },
-            function(e) { root.available = false; })
+            function(e) { root.available = false; });
     }
     function toggle() {
         torch.call("luna://org.webosports.service.torch/toggle", "{}",
