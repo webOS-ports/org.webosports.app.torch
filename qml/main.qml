@@ -73,6 +73,7 @@ WebOSWindow {
 
     Image {
         id: torchOff
+        objectName: "torchOff"
         source: "images/torch_off.png"
         height: parent.height * 0.86
         width: height * (sourceSize.width / sourceSize.height)
@@ -83,6 +84,7 @@ WebOSWindow {
         mipmap: true
     }
     Image {
+        objectName: "torchOn"
         source: "images/torch_on.png"
         height: torchOff.height
         width: torchOff.width
@@ -95,6 +97,7 @@ WebOSWindow {
     }
 
     Text {
+        objectName: "caption"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Units.gu(2.5)
