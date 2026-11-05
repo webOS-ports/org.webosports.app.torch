@@ -1,9 +1,16 @@
 Torch
 =====
 
-The LuneOS torch app: a card with a torch on it that switches the
-flashlight LED through torchd (org.webosports.service.torch), as the
-shell's Flashlight toggle does.
+Summary
+-------
+The LuneOS torch app: switches the flashlight LED through torchd.
+
+A card with a torch on it that switches the flashlight LED through torchd
+(org.webosports.service.torch), as the shell's Flashlight toggle does.
+
+The Summary line above is read by webos_modules_init (webOS.cmake) as the
+project summary, and configure stops without it: keep the heading and keep
+it to one line.
 
 Tests
 -----
